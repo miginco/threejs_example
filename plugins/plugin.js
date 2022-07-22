@@ -8,7 +8,9 @@ import {
     VWindow,
     VWindowItem,
     VMain,
-    VFooter
+    VFooter,
+    VToolbarTitle,
+
 } from "vuetify/components";
 
 
@@ -22,7 +24,8 @@ export default defineNuxtPlugin((nuxtApp) => {
             VWindow,
             VWindowItem,
             VMain,
-            VFooter
+            VFooter,
+            VToolbarTitle
         }
     })
 

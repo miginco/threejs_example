@@ -3,9 +3,34 @@
   <component name="ProjectRootManager">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="SwUserDefinedSpecifications">
-    <option name="specTypeByUrl">
-      <map />
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/README.md" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="332" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/nuxt.config.ts" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="85" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/components/fileselector.vue" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="220" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/plugins/plugin.js" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="164" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/plugins/vuetify.js" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="375" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/app.vue" />
+        </OpenedFileInfo>
+      </list>
     </option>
   </component>
 </project>

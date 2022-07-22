@@ -1,5 +1,10 @@
-// import {createVuetify, ThemeDefinition} from "vuetify";
-// import * as components from 'vuetify/components'
-// import * as directives from 'vuetify/directives'
+import {createNuxtApp} from "nuxt/app";
+import {createVuetify} from "vuetify";
 
-// https://zenn.dev/tempra/articles/a8405c5a5fe448
+export default createVuetify({
+    theme: {
+        defaultTheme: 'dark'
+    }
+})
+
+
