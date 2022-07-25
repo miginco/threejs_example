@@ -10,6 +10,8 @@ import {
     VMain,
     VFooter,
     VToolbarTitle,
+    VListItem,
+    VFileInput
 
 } from "vuetify/components";
 
@@ -25,7 +27,9 @@ export default defineNuxtPlugin((nuxtApp) => {
             VWindowItem,
             VMain,
             VFooter,
-            VToolbarTitle
+            VToolbarTitle,
+            VListItem,
+            VFileInput
         }
     })
 
