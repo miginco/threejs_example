@@ -1,5 +1,5 @@
 import {
-    AmbientLight, BufferGeometry, Material,
+    AmbientLight, BoxGeometry, BufferGeometry, Material,
     Mesh, MeshPhongMaterial, MeshStandardMaterial, Object3D,
     OrthographicCamera,
     PointLight,
@@ -106,6 +106,14 @@ export default class SceneHandler {
         const light2 = new PointLight('#FFFFCC', 0.5)
         light2.position.set(-1000, -1000, 0)
         this.scene.add(light2)
+
+        const testGeo = new BoxGeometry(100, 50, 80)
+        const testMat = new MeshPhongMaterial({
+            color: "#00FF00"
+        })
+
+        const testObj = new Mesh(testGeo, testMat)
+        this.scene.add(testObj)
 
         console.log('This scene has been initialized.')
         this.canvas = canvas

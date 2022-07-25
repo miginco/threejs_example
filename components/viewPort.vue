@@ -8,27 +8,34 @@
 import {defineComponent, onMounted} from "@vue/runtime-core";
 import SceneHandler from "assets/sceneHandler";
 import {useUserDataStore} from "~/store/userData";
+import { ref } from "vue"
+import {window} from "rxjs";
 
 export default defineComponent({
-  setup(){
+  setup(props, context){
     const userData = ref(useUserDataStore())
-    const width = 500
-    const height = 500
-    let handler: SceneHandler|null = null
+    const width = ref(window.innerWidth)
+    const height = ref(window.innerHeight)
+    const handler = ref<InstanceType<typeof SceneHandler>>()
 
     onMounted(() => {
+      console.log('Scene is being initialized...')
+
       const canvas:HTMLCanvasElement|HTMLElement = document.getElementById('viewportCanvas')
       if(canvas instanceof HTMLCanvasElement){
-        this.handler = new SceneHandler(canvas)
+        handler.value = new SceneHandler(canvas)
       }
+      // width.value = window.innerWidth
+      // height.value = window.innerHeight
     })
 
     const importGeometry = () => {
-      if(this.handler==null){
+      console.log('on viewport.importGeometry')
+      if(handler==null){
         console.log('The Scene is not initialized yet.')
         return
       }
-      this.handler.importGeometry()
+      handler.value.importGeometry()
     }
 
     return {
@@ -41,6 +48,10 @@ export default defineComponent({
 
 <style scoped>
 .artwork{
+  background: #323232;
+  width: 100%;
+  height: calc(100vh - 30px - 48px);
+  z-index: 2;
 
 }
 

@@ -2,7 +2,7 @@
   <v-app>
     <div id="app">
       <v-navigation-drawer  app clipped class="pa-2">
-        <fileselector @fileLoaded="onFileLoaded"/>
+        <file-selector @fileLoaded="onFileLoaded"/>
       </v-navigation-drawer>
 
       <v-app-bar  app dense flat clipped-left color="#323232">
@@ -14,7 +14,7 @@
       </v-app-bar>
 
       <v-main>
-        <view-port />
+        <view-port ref="viewPortRef"/>
       </v-main>
 
       <v-footer :height="40">
@@ -25,26 +25,35 @@
 </template>
 
 <script lang="ts">
-import Fileselector from "~/components/fileselector.vue";
+import fileSelector from "~/components/fileSelector.vue";
 import {useUserDataStore} from "~/store/userData";
 import {defineComponent} from "@vue/runtime-core";
-import {ref, computed} from 'vue'
-import ViewPort from "~/components/viewPort.vue";
+import {ref, computed, onMounted} from 'vue'
+import viewPort from "~/components/viewPort.vue";
+import {SetTraceNotification} from "vscode-jsonrpc";
+import type = SetTraceNotification.type;
 
 export default defineComponent({
-  components: {ViewPort},
+  components: {viewPort, fileSelector},
   setup() {
-    const root = ref(null)
+    const viewPortRef = ref<InstanceType<typeof viewPort>>()
     const userData = ref(useUserDataStore())
     const name = computed(() => userData.value.name)
+
+    onMounted(()=>{
+      console.log('mounted')
+    })
+
     const onFileLoaded = () => {
-      console.log('importing...')
-      root.value.ViewPort.importGeometry()
+      console.log(viewPortRef.value)
+      console.log('*******')
+      viewPortRef.value?.importGeometry()
     }
 
     return {
       name,
-      onFileLoaded
+      onFileLoaded,
+      viewPortRef
     }
   }
 
