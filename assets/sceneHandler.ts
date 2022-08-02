@@ -1,11 +1,11 @@
 import {
-    AmbientLight, BoxGeometry, BufferGeometry, Material,
-    Mesh, MeshPhongMaterial, MeshStandardMaterial, Object3D,
-    OrthographicCamera,
+    AmbientLight, BufferGeometry, DoubleSide, Material,
+    Mesh, MeshPhongMaterial,
+    PerspectiveCamera,
     PointLight,
     Scene,
     Vector3,
-    WebGLRenderer
+    WebGLRenderer,
 } from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {useUserDataStore} from "~/store/userData";
@@ -13,6 +13,7 @@ import {STLLoader} from "three/examples/jsm/loaders/STLLoader";
 import {scalarOptions} from "yaml";
 import Str = scalarOptions.Str;
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+import load from "unplugin/dist/webpack/loaders/load";
 
 // レンダラーにはcanvasを紐づける。
 // レンダリング時にシーンとカメラを指定する。
@@ -34,7 +35,8 @@ const defaultMetaData: ObjectMetaData = {
     mat: new MeshPhongMaterial({
             color: '#FF0000',
             shininess: 50,
-            specular: '#323232'
+            specular: '#323232',
+            side: DoubleSide
         }
     )
 }
@@ -51,10 +53,10 @@ export default class SceneHandler {
     private scene = new Scene()
 
     // Camera settings
-    private camera: OrthographicCamera
+    private camera: PerspectiveCamera
     private factor = 4
-    private camNear = 1
-    private camFar = 3000
+    private camNear = 0.1
+    private camFar = 30000
     private camDistance = -500
     private camCtrl: OrbitControls
 
@@ -71,13 +73,17 @@ export default class SceneHandler {
         const h = r.height
 
         // init camera
-        this.camera = new OrthographicCamera(
-            w / -this.factor,
-            w / this.factor,
-            h / this.factor,
-            h / -this.factor,
+        this.camera = new PerspectiveCamera(
+            50,
+            w/h,
             this.camFar,
             this.camNear
+            // w / -this.factor,
+            // w / this.factor,
+            // h / this.factor,
+            // h / -this.factor,
+            // this.camFar,
+            // this.camNear
         )
 
         this.camera.position.set(-this.camDistance, minZoomScale, maxZoomScale)
@@ -107,16 +113,16 @@ export default class SceneHandler {
         light2.position.set(-1000, -1000, 0)
         this.scene.add(light2)
 
-        const testGeo = new BoxGeometry(100, 50, 80)
-        const testMat = new MeshPhongMaterial({
-            color: "#00FF00"
-        })
-
-        const testObj = new Mesh(testGeo, testMat)
-        this.scene.add(testObj)
+        // const testGeo = new BoxGeometry(100, 50, 80)
+        // const testMat = new MeshPhongMaterial({
+        //     color: "#00FF00"
+        // })
+        // const testObj = new Mesh(testGeo, testMat)
+        // this.scene.add(testObj)
 
         console.log('This scene has been initialized.')
         this.canvas = canvas
+        this.update()
     }
 
     private getMesh = (meta: ObjectMetaData) => {
@@ -139,10 +145,10 @@ export default class SceneHandler {
         return new Promise((resolve, reject) => {
             try {
                 if (fileExt === 'stl' || fileExt === "STL"){
-                    this.importSTL(this.userData.dataURL, mainMetaData)
+                    this.importSTL(this.userData.data, mainMetaData)
                 }
-                if (fileExt === 'obj' || fileExt === 'OBJ'){
-                    this.importOBJ(this.userData.dataURL, mainMetaData)
+                else if(fileExt === 'obj' || fileExt === 'OBJ'){
+                    this.importOBJ(this.userData.data, mainMetaData)
                 }
                 else{
                     procTime = Date.now() - procTime
@@ -162,15 +168,11 @@ export default class SceneHandler {
         })
     }
 
-    private importSTL = (url: string, meta = defaultMetaData) => {
+    private importSTL = (data: string, meta = defaultMetaData) => {
         const loader = new STLLoader()
-        loader.load(
-            url,
-            (geo) => {this.addGeometryBufferToScene(meta, geo)},
-            (e) => {console.log( ( e.loaded / e.total * 100 ) + '% loaded' )},
-            (e) => {console.log( 'An error happened on data loading' )
-            }
-        )
+        const geo = loader.parse(data)
+        this.addGeometryBufferToScene(meta, geo)
+
     }
 
     private addGeometryBufferToScene = (meta:ObjectMetaData, geo: BufferGeometry) => {
@@ -181,56 +183,59 @@ export default class SceneHandler {
             console.log('previous object of "' + meta.id + '" has been deleted.')
         }
 
-       geo.computeBoundingBox()
+        geo.computeBoundingBox()
         const bb = geo.boundingBox
         const center = new Vector3()
         bb?.getCenter(center)
         geo.translate(-center.x, -center.y, -center.z) // shift to center
-
-
+        geo.scale(100, 100, 100)
         const mat = meta.mat
         const obj = new Mesh(geo, mat)
         obj.name = meta.id
         obj.rotation.set(0, 0, 0 * Math.PI)
+
         this.scene.add(obj)
     }
 
-    private importOBJ = (url: string, meta = defaultMetaData) => {
+    private importOBJ = (data: string, meta = defaultMetaData) => {
+        // console.log('Obj Data:')
+        // console.log(data)
         const loader = new OBJLoader()
         const scene = this.scene
-        loader.load(
-            url,
-            (obj) => {
-                const oldObj: any = this.getMesh(meta)
-                if (oldObj !== null){
-                    this.scene.remove(oldObj)
-                    oldObj.geometry.dispose()
-                    console.log('previous object of "' + meta.id + '" has been deleted.')
-                }
 
-                obj.children.forEach(function (objChild: any, _) {
-                    if (objChild.type === 'Mesh') {
-                        objChild.material = meta.mat
-                        objChild.material.flatShading = true
-                        objChild.name = meta.id
-                        objChild.rotation.set(0, 0, Math.PI)
-                        scene.add(objChild)
-                    }
-                })
-            },
-            (e) => {console.log( ( e.loaded / e.total * 100 ) + '% loaded' )},
-            (e) => {console.log( 'An error happened on data loading' )}
-        )
+        const oldObj: any = this.getMesh(meta)
+        if (oldObj !== null){
+            this.scene.remove(oldObj)
+            oldObj.geometry.dispose()
+            console.log('previous object of "' + meta.id + '" has been deleted.')
+        }
+
+        const obj = loader.parse(data)
+        console.log(obj)
+        obj.children.forEach(function (objChild: any, _) {
+            if (objChild.type === 'Mesh') {
+                objChild.material = meta.mat
+                objChild.material.flatShading = true
+                objChild.name = meta.id
+                objChild.rotation.set(0, 0, -0*Math.PI)
+                objChild.scale.set(100, 100, 100)
+                console.log(objChild)
+                scene.add(objChild)
+                console.log('add: ' + meta.id)
+            }
+        })
+        console.log('OK')
+        console.log(this.scene)
     }
 
-    private createCameraControls = (camera: OrthographicCamera, minZoomScale:number, maxZoomScale:number) => {
+    private createCameraControls = (camera: PerspectiveCamera, minZoomScale:number, maxZoomScale:number) => {
         const camCtrl = new OrbitControls(camera, this.canvas)
         camCtrl.minZoom = minZoomScale
         camCtrl.maxZoom = maxZoomScale
         camCtrl.panSpeed = 1.25
         camCtrl.rotateSpeed = 0.5
         camCtrl.zoomSpeed = 1.5
-        camCtrl.screenSpacePanning = false
+        camCtrl.screenSpacePanning = true
         camCtrl.enableDamping = false
         camCtrl.addEventListener('change', () => {
             this.update()

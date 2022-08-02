@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted} from "@vue/runtime-core";
-import SceneHandler from "assets/sceneHandler";
-import {useUserDataStore} from "~/store/userData";
+import {defineComponent, onMounted} from "@vue/runtime-core"
+import SceneHandler from "assets/sceneHandler"
+import {useUserDataStore} from "~/store/userData"
 import { ref } from "vue"
-import {window} from "rxjs";
+import {window} from "rxjs"
 
 export default defineComponent({
   setup(props, context){

@@ -1,28 +1,14 @@
 <template>
   <div id="app">
-    <v-list flat dense>
-      <v-list-item>
-        <v-row justify="center" class="py-1">
-          読み込むファイルの選択
-        </v-row>
-      </v-list-item>
-      <v-divider />
-      <v-list-item>
-          <v-file-input
-              dense
-              outlined
-              label="クリックして開く"
-              accept="stl"
-              class="text-caption"
-              @change="getFile"
-          />
-      </v-list-item>
-      <v-list-item dense>
-          <v-btn v-if="true" elevation="0" :disabled="false" @click="">
-            読み込む
-          </v-btn>
-      </v-list-item>
-    </v-list>
+      読み込むファイルの選択
+      <v-file-input
+          dense
+          outlined
+          label="クリックして開く"
+          accept="stl"
+          class="text-caption"
+          @change="getFile"
+      />
   </div>
 
 </template>
@@ -39,7 +25,11 @@ export default defineComponent ({
     const name = computed(() => userData.value.name)
 
     const getFile = async (e: Event) => {
+      console.log("name: "+userData.value.name)
+
       await userData.value.load(e.target.files[0])
+      // console.log("name: "+userData.value.name)
+      // console.log("data: "+userData.value.data)
       context.emit('fileLoaded')
     }
 

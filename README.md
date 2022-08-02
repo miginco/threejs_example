@@ -1,6 +1,13 @@
-# Nuxt 3 Minimal Starter
+# 3Dモデル表示 web-app
+- Threejs, vue3, piniaの学習のため、3Dモデルを表示するwebアプリを作成しました。
+- 任意のobj, stlファイルの表示ができます。
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+# 使用技術
+vue3
+nuxt3
+pinia
+three.js
+
 
 ## Setup
 

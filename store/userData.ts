@@ -6,7 +6,7 @@ export const useUserDataStore = defineStore('userData', {
     state: () => {
         return{
         name: 'untitled',
-        dataURL: ''
+        data: ''
     }},
 
     getters: {
@@ -16,21 +16,26 @@ export const useUserDataStore = defineStore('userData', {
     actions: {
         async load(file: File): Promise<void> {
             return new Promise((resolve, reject) => {
-                this.name = file.name
                 const blob: Blob = file
-                let reader = new FileReader()
+                let elapsedTime = Date.now()
+
+                const reader = new FileReader()
                 reader.onload = () => {
                     this.data = reader.result as string
-                    console.log(this.name + ' is loaded successfully [' + Date.now() + ']')
+                    this.name = file.name
+                    elapsedTime =  Date.now()-elapsedTime
+                    console.log(this.name + ' is loaded successfully [' + elapsedTime + 'ms ]')
                     // console.log(this.data)
                     resolve()
                 }
-                reader.onerror = () => {
-                    console.log('file loading is failed')
-                    reject()
+
+                reader.onerror = (e) => {
+                    elapsedTime =  Date.now()-elapsedTime
+                    console.log('file loading is failed [' +elapsedTime+ 'ms ]')
+                    reject(e)
                 }
-                // reader.readAsArrayBuffer(blob)
-                reader.readAsDataURL(blob)
+
+                reader.readAsText(blob)
             })
         }
 

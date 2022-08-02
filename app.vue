@@ -8,7 +8,7 @@
       <v-app-bar  app dense flat clipped-left color="#323232">
         <v-toolbar-title class="subtitle-1">
           <span style="color: #FFFFFF; font-family: 'Noto Sans JP', sans-serif;">
-            テスト {{name}}
+            表示モデル: {{name}}
           </span>
         </v-toolbar-title>
       </v-app-bar>
@@ -45,8 +45,8 @@ export default defineComponent({
     })
 
     const onFileLoaded = () => {
-      console.log(viewPortRef.value)
-      console.log('*******')
+      // console.log(viewPortRef.value)
+      // console.log('*******')
       viewPortRef.value?.importGeometry()
     }
 
